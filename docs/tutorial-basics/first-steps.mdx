@@ -6,16 +6,14 @@ sidebar_position: 1
 
 ## Typescript
 
-- Create a new npm project, install fastify, typescript, node.js types and nodemon with ts-node to create development server with auto restarting.
-
+### Install packages
 ```bash
 npm init -y
 npm i fastify
 npm i -D typescript @types/node nodemon ts-node
 ```
 
-- Add the following commands to the "scripts" section of the package.json:
-
+### Update scripts
 ```json title="package.json"
 {
   ...
@@ -28,7 +26,7 @@ npm i -D typescript @types/node nodemon ts-node
 }
 ```
 
-- Initialize a TypeScript configuration file:
+### Initialize a TypeScript configuration file:
 
 ```bash
 npx tsc --init
@@ -84,37 +82,42 @@ typescript error: 'request.query' is of type 'unknown'.
 This need a validation to be sure a user provide data that you want
 :::
 
-install typebox and typebox type provider
+### Install plugins
 
 ```bash
 npm i @sinclair/typebox @fastify/type-provider-typebox
 ```
 
+### Validate query string
+
 ```ts title="index.ts"
 import fastify from "fastify";
-// import typebox and type provider
+// highlight-start
+
 import { Type } from "@sinclair/typebox";
 import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
-// apply type provider
+// setup typescript autocompletion
 const app = fastify().withTypeProvider<TypeBoxTypeProvider>();
+// highlight-end
 
 app.get(
   "/",
+
   {
     schema: {
-      // validate query string using typebox to create json schema
       querystring: Type.Object({
         name: Type.String(),
       }),
     },
   },
+
   (request, response) => {
-    // typescript - name: string
     return `hello ${request.query.name}`;
   }
 );
 
+// highlight-end
 app.listen({ port: 4000 }, (error, address) => {
   if (error) {
     console.error(error);
@@ -125,17 +128,55 @@ app.listen({ port: 4000 }, (error, address) => {
 ```
 
 - Open your browser at [http://localhost:4000/](http://localhost:4000/)
+
+```json
+{
+  "statusCode": 400,
+  "error": "Bad Request",
+  "message": "querystring must have required property 'name'"
+}
+```
+
 - Open your browser at [http://localhost:4000?name=jan](http://localhost:4000?name=jan)
+```json
+hello jan
+```
+### Typesafe reponse
+
+```ts
+...
+app.get(
+  "/",
+  {
+    schema: {
+      querystring: Type.Object({
+        name: Type.String(),
+      }),
+    },
+    // highlight-start
+
+    response: {
+      "200": Type.String()
+    }
+
+    // highlight-end
+  },
+  (request, response) => {
+    return `hello ${request.query.name}`;
+  }
+);
+...
+```
 
 ## API Documentation
 
-install @fastify/swagger and @fastify/swagger-ui wchich are nesseray to create interactive api documentation
+### Instal plugins
 
 ```bash
 npm i @fastify/swagger @fastify/swagger-ui
 ```
 
-Update tsconfig and package.json with following properties
+### Update configs to be able to use top-level await
 
 ```json title="tsconfig.json"
 {
@@ -166,7 +207,7 @@ node -v
 
 :::
 
-update code
+### Register plugins
 
 ```ts
 import fastify from "fastify";
@@ -220,30 +261,3 @@ app.listen({ port: 4000 }, async (error, address) => {
 
 - Open your browser at [http://localhost:4000/docs](http://localhost:4000/docs)
   ![Docusaurus logo](./img/swagger.png)
-
-#### typesafe reponse
-
-```ts
-...
-app.get(
-  "/",
-  {
-    schema: {
-      querystring: Type.Object({
-        name: Type.String(),
-      }),
-    },
-    // highlight-start
-
-    response: {
-      "200": Type.String()
-    }
-
-    // highlight-end
-  },
-  (request, response) => {
-    return `hello ${request.query.name}`;
-  }
-);
-...
-```
