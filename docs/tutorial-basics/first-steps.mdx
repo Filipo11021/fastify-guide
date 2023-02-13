@@ -6,14 +6,16 @@ sidebar_position: 1
 
 ## Typescript
 
-### Install packages
+**Install packages**
+
 ```bash
 npm init -y
 npm i fastify
 npm i -D typescript @types/node nodemon ts-node
 ```
 
-### Update scripts
+**Update scripts**
+
 ```json title="package.json"
 {
   ...
@@ -26,13 +28,13 @@ npm i -D typescript @types/node nodemon ts-node
 }
 ```
 
-### Initialize a TypeScript configuration file:
+**Initialize a TypeScript configuration file**
 
 ```bash
 npx tsc --init
 ```
 
-- Copy that to a file index.ts.
+**Copy that to a file index.ts**
 
 ```ts title="index.ts"
 import fastify from "fastify";
@@ -52,17 +54,17 @@ app.listen({ port: 4000 }, (error, address) => {
 });
 ```
 
-- Run command below to start the Fastify server
+**Run command below to start the Fastify server**
 
 ```bash
 npm run dev
 ```
 
+**Open your browser at [http://localhost:4000/](http://localhost:4000/)**
+
 :::info
 When you change your code the server will automatically restart.
 :::
-
-- Open your browser at [http://localhost:4000/](http://localhost:4000/)
 
 ## Validation
 
@@ -82,13 +84,13 @@ typescript error: 'request.query' is of type 'unknown'.
 This need a validation to be sure a user provide data that you want
 :::
 
-### Install plugins
+**Install plugins**
 
 ```bash
 npm i @sinclair/typebox @fastify/type-provider-typebox
 ```
 
-### Validate query string
+**Validate query string**
 
 ```ts title="index.ts"
 import fastify from "fastify";
@@ -127,7 +129,7 @@ app.listen({ port: 4000 }, (error, address) => {
 });
 ```
 
-- Open your browser at [http://localhost:4000/](http://localhost:4000/)
+**Open your browser at [http://localhost:4000/](http://localhost:4000/)**
 
 ```json
 {
@@ -137,11 +139,13 @@ app.listen({ port: 4000 }, (error, address) => {
 }
 ```
 
-- Open your browser at [http://localhost:4000?name=jan](http://localhost:4000?name=jan)
+**Open your browser at [http://localhost:4000?name=jan](http://localhost:4000?name=jan)**
+
 ```json
 hello jan
 ```
-### Typesafe reponse
+
+**Typesafe reponse**
 
 ```ts
 ...
@@ -170,13 +174,13 @@ app.get(
 
 ## API Documentation
 
-### Instal plugins
+**Install plugins**
 
 ```bash
 npm i @fastify/swagger @fastify/swagger-ui
 ```
 
-### Update configs to be able to use top-level await
+**Update configs to be able to use top-level await**
 
 ```json title="tsconfig.json"
 {
@@ -207,7 +211,7 @@ node -v
 
 :::
 
-### Register plugins
+**Register plugins**
 
 ```ts
 import fastify from "fastify";
@@ -250,7 +254,7 @@ app.get(
 );
 
 app.listen({ port: 4000 }, async (error, address) => {
-  if (error) {
+  if (error) {**
     console.error(error);
     process.exit(1);
   }
@@ -259,5 +263,6 @@ app.listen({ port: 4000 }, async (error, address) => {
 });
 ```
 
-- Open your browser at [http://localhost:4000/docs](http://localhost:4000/docs)
-  ![Docusaurus logo](./img/swagger.png)
+**Open your browser at [http://localhost:4000/docs](http://localhost:4000/docs)**
+
+![swagger ui documentation](./img/swagger.png)
