@@ -2,6 +2,10 @@
 sidebar_position: 1
 ---
 
+import BrowserWindow from "@site/src/components/BrowserWindow";
+import CodeBlock from "@theme/CodeBlock";
+import swaggerImage from "./img/swagger.png";
+
 # First Steps
 
 ## Typescript
@@ -11,7 +15,7 @@ sidebar_position: 1
 ```bash
 npm init -y
 npm i fastify
-npm i -D typescript @types/node nodemon ts-node
+npm i --save-dev typescript @types/node tsx
 ```
 
 **Update scripts**
@@ -20,9 +24,9 @@ npm i -D typescript @types/node nodemon ts-node
 {
   ...
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc",
     "start": "node index.js",
-    "dev": "nodemon index.ts"
+    "dev": "tsx watch index.ts"
   }
   ...
 }
@@ -39,7 +43,7 @@ npx tsc --init
 ```ts title="index.ts"
 import fastify from "fastify";
 
-const app = fastify();
+const app = fastify({ logger: true });
 
 app.get("/", (request, response) => {
   return "hello world";
@@ -54,7 +58,7 @@ app.listen({ port: 4000 }, (error, address) => {
 });
 ```
 
-**Run command below to start the Fastify server**
+**Run command below to start the Fastify dev server**
 
 ```bash
 npm run dev
@@ -62,8 +66,10 @@ npm run dev
 
 **Open your browser at [http://localhost:4000/](http://localhost:4000/)**
 
+<BrowserWindow url="http://localhost:4000">hello world</BrowserWindow>
+
 :::info
-When you change your code the server will automatically restart.
+When you change your code the server will automatically restart
 :::
 
 ## Validation
@@ -100,7 +106,7 @@ import { Type } from "@sinclair/typebox";
 import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 
 // setup typescript autocompletion
-const app = fastify().withTypeProvider<TypeBoxTypeProvider>();
+const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
 // highlight-end
 
 app.get(
@@ -131,23 +137,43 @@ app.listen({ port: 4000 }, (error, address) => {
 
 **Open your browser at [http://localhost:4000/](http://localhost:4000/)**
 
-```json
-{
-  "statusCode": 400,
-  "error": "Bad Request",
-  "message": "querystring must have required property 'name'"
-}
-```
+<BrowserWindow fullscreen url="http://localhost:4000">
+<CodeBlock className="language-json">{JSON.stringify({
+      statusCode: 400,
+      error: "Bad Request",
+      message: "querystring must have required property 'name'",
+    }, null, 2)}</CodeBlock>
+
+</BrowserWindow>
 
 **Open your browser at [http://localhost:4000?name=jan](http://localhost:4000?name=jan)**
 
-```json
-hello jan
+<BrowserWindow url="http://localhost:4000?name=jan">hello jan</BrowserWindow>
+
+**Validate body**
+```ts
+...
+app.get(
+  "/test",
+
+  {
+    schema: {
+      body: Type.Object({
+        name: Type.String(),
+      }),
+    },
+  },
+
+  (request, response) => {
+    return `hello ${request.body.name}`;
+  }
+);
+...
 ```
 
 **Typesafe reponse**
 
-```ts
+```ts title="index.ts"
 ...
 app.get(
   "/",
@@ -180,51 +206,20 @@ app.get(
 npm i @fastify/swagger @fastify/swagger-ui
 ```
 
-**Update configs to be able to use top-level await**
-
-```json title="tsconfig.json"
-{
-  "compilerOptions": {
-    ...
-    "target": "ES2022",
-    "module": "ES2022",
-    ...
-  }
-  "ts-node": { "esm": true }
-}
-```
-
-```json title="package.json"
-{
-  ...
-  "type": "module",
-  ...
-}
-```
-
-:::info
-make sure you have node version 16 or higher
-
-```bash
-node -v
-```
-
-:::
-
 **Register plugins**
 
-```ts
+```ts title="index.ts"
 import fastify from "fastify";
 import { Type } from "@sinclair/typebox";
 import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
 import fastifySwagger from "@fastify/swagger";
 import fastifySwaggerUi from "@fastify/swagger-ui";
 
-const app = fastify().withTypeProvider<TypeBoxTypeProvider>();
+const app = fastify({ logger: true }).withTypeProvider<TypeBoxTypeProvider>();
 
 // highlight-start
 
-await app.register(fastifySwagger, {
+app.register(fastifySwagger, {
   openapi: {
     info: {
       title: "demo app",
@@ -233,7 +228,7 @@ await app.register(fastifySwagger, {
   },
 });
 
-await app.register(fastifySwaggerUi, {
+app.register(fastifySwaggerUi, {
   routePrefix: "/docs",
 });
 
@@ -254,7 +249,7 @@ app.get(
 );
 
 app.listen({ port: 4000 }, async (error, address) => {
-  if (error) {**
+  if (error) {
     console.error(error);
     process.exit(1);
   }
@@ -265,4 +260,6 @@ app.listen({ port: 4000 }, async (error, address) => {
 
 **Open your browser at [http://localhost:4000/docs](http://localhost:4000/docs)**
 
-![swagger ui documentation](./img/swagger.png)
+<BrowserWindow fullscreen={true} url="http://localhost:4000/docs">
+  <img src={swaggerImage} />
+</BrowserWindow>
