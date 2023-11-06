@@ -6,12 +6,14 @@ interface Props {
   children: ReactNode;
   minHeight: number;
   url: string;
+  fullscreen: boolean;
 }
 
 export default function BrowserWindow({
   children,
   minHeight = 0,
   url = "http://localhost:4000",
+  fullscreen=false
 }: Props): JSX.Element {
   return (
     <div className={styles.browserWindow} style={{ minHeight }}>
@@ -33,7 +35,7 @@ export default function BrowserWindow({
         </div> */}
       </div>
 
-      <div className={styles.browserWindowBody}>{children}</div>
+      <div className={clsx(!Boolean(fullscreen) && styles.browserWindowBodyPadding, styles.browserWindowBody)}>{children}</div>
     </div>
   );
 }

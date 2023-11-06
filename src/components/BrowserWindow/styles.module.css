@@ -72,6 +72,11 @@
   background-color: var(--ifm-background-color);
   border-bottom-left-radius: inherit;
   border-bottom-right-radius: inherit;
+  display: grid;
+  overflow: hidden;
+}
+
+.browserWindowBodyPadding {
   padding: 1rem;
 }
 
