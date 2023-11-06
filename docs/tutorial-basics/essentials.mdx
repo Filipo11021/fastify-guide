@@ -4,16 +4,76 @@ sidebar_position: 2
 
 # Essentials
 
+## Request Body
+```ts
+...
+app.get(
+  "/",
+  {
+    schema: {
+      body: Type.Object({
+        name: Type.String(),
+      }),
+    },
+  },
+  (request, response) => {
+    return `hello ${request.body.name}`;
+  }
+);
+...
+```
+
 ## Path Parameters
-/tasks/:id
+```ts
+...
+app.get(
+  "/:id",
+  {
+    schema: {
+      params: Type.Object({
+        id: Type.Number(),
+      }),
+    },
+  },
+  (request, response) => {
+    return `id: ${request.params.id}`;
+  }
+);
+...
+```
 
 ## Query Parameters
-?name=jan
-
-## Request Body
-{"task": "test"}
+```ts
+...
+app.get(
+  "/",
+  {
+    schema: {
+      querystring: Type.Object({
+        name: Type.String(),
+      }),
+    },
+  },
+  (request, response) => {
+    return `hello ${request.query.name}`;
+  }
+);
+...
+```
 
 ## Response Status Code
+```ts
+...
+app.get(
+  "/",
+  (request, response) => {
+    response.status(218)
+    
+    return `status: ${response.statusCode}`;
+  }
+);
+...
+```
 
 ## Cookies
 
